@@ -1,0 +1,1798 @@
+<!doctype html>
+<html lang='ja'>
+<head>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1, viewport-fit=cover' />
+  <meta name='theme-color' content='#111827' />
+  <title>フラッシュ たしざん ひきざん</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:#111827;
+      --muted:#9ca3af;
+      --text:#e5e7eb;
+      --btn:#1f2937;
+      --btn2:#111827;
+      --primary:#2563eb;
+      --danger:#dc2626;
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    html{background: linear-gradient(180deg, var(--bg), #050814);}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Noto Sans JP', sans-serif;
+      background: linear-gradient(180deg, var(--bg), #050814);
+      background-attachment: fixed;
+      color:var(--text);
+    }
+    .app{min-height:100%; display:flex; flex-direction:column;}
+    .topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 14px 10px;}
+    .title{font-size:18px; font-weight:700}
+    .main{flex:1; padding:12px 14px 18px}
+
+    .screen{max-width:720px; margin:0 auto}
+    .hidden{display:none !important}
+
+    .h1{margin:8px 0 14px; font-size:22px}
+
+    .card{
+      background:rgba(17,24,39,0.85);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:var(--radius);
+      padding:14px;
+      margin:12px 0;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .label{font-size:14px; color:var(--muted); margin-bottom:10px}
+    .hint{font-size:12px; color:var(--muted); margin-top:10px}
+
+    .row{display:flex; align-items:center; justify-content:space-between; gap:12px;}
+    .seg{display:flex; flex-wrap:wrap; gap:10px;}
+
+    .segBtn{
+      background:var(--btn);
+      border:1px solid rgba(255,255,255,0.08);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:16px;
+      min-width:120px;
+      cursor:pointer;
+    }
+    .segBtn.active{
+      outline:2px solid rgba(37,99,235,0.7);
+      background:rgba(37,99,235,0.25);
+    }
+
+    .btn{
+      background:var(--btn2);
+      border:1px solid rgba(255,255,255,0.10);
+      color:var(--text);
+      padding:12px 14px;
+      border-radius:16px;
+      font-size:18px;
+      cursor:pointer;
+    }
+    .btn.big{width:100%; padding:16px 14px; font-size:20px}
+    .btn.primary{background:rgba(37,99,235,0.9); border-color:rgba(255,255,255,0.12)}
+    .btn.ghost{background:transparent}
+
+    .btn.subtle{
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.10);
+      color:rgba(229,231,235,0.80);
+      font-size:16px;
+      padding:10px 12px;
+      border-radius:14px;
+    }
+
+    .switch{position:relative; width:54px; height:32px; display:inline-block;}
+    .switch input{display:none}
+    .slider{position:absolute; inset:0; border-radius:16px; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.10);}
+    .slider:before{content:''; position:absolute; width:26px; height:26px; left:3px; top:2px; border-radius:50%; background:#fff; transition: transform 0.18s ease;}
+    .switch input:checked + .slider:before{transform: translateX(22px);}
+
+    .footer{padding:10px 14px 16px; color:var(--muted); font-size:12px;}
+    .status{max-width:720px; margin:0 auto}
+
+    #screenQuiz{display:flex; flex-direction:column; min-height:100%;}
+    #screenQuiz[hidden]{display:none !important;}
+    #screenQuiz.hidden{display:none !important;}
+
+    .progressRow{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:6px;}
+    .progressText{font-size:14px; color:var(--muted);}
+    .numBig{font-size:30px; font-weight:900; color:var(--text);}
+    .numHuge{font-size:60px; font-weight:900; color:var(--text);}
+    .resultLine{margin:8px 0; line-height:1.05;}
+    .progressBar{height:10px; background:rgba(255,255,255,0.10); border-radius:999px; overflow:hidden; margin-top:8px;}
+    .progressFill{height:100%; width:0%; background:rgba(37,99,235,0.9);}
+
+    .quizCard{
+      background:rgba(17,24,39,0.85);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:var(--radius);
+      padding:16px 14px;
+      margin:12px 0 12px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .exprRow{
+      display:grid;
+      grid-template-columns: auto auto;
+      justify-content:center;
+      align-items:baseline;
+      gap:8px;
+      padding:10px 0 6px;
+      width:100%;
+    }
+    .exprLeft{
+      display:flex;
+      align-items:baseline;
+      justify-content:center;
+      gap:10px;
+      min-width:0;
+    }
+    .problem{
+      font-size:56px;
+      font-weight:900;
+      letter-spacing:1px;
+      line-height:1;
+      white-space:nowrap;
+    }
+    .eq{
+      font-size:46px;
+      font-weight:900;
+      line-height:1;
+      opacity:0.95;
+      white-space:nowrap;
+    }
+
+    .typedSlot{
+      width:4ch;
+      display:flex;
+      justify-content:flex-start;
+      align-items:baseline;
+    }
+    .typed{
+      font-size:56px;
+      font-weight:900;
+      letter-spacing:2px;
+      line-height:1;
+      min-width:1ch;
+      text-align:left;
+    }
+    .typed.muted{ color:rgba(229,231,235,0.40); }
+
+    .typedInput{
+      width:4ch;
+      font-size:56px;
+      font-weight:900;
+      letter-spacing:2px;
+      line-height:1;
+      min-width:1ch;
+      text-align:left;
+      color:var(--text);
+      background:transparent;
+      border:none;
+      outline:none;
+      padding:0;
+      margin:0;
+      font-family:inherit;
+      caret-color:var(--text);
+    }
+    .typedInput.hidden{display:none !important;}
+    .typedInput::placeholder{color:rgba(229,231,235,0.40);}
+
+    @media (max-width:420px){
+      .problem{font-size:46px;}
+      .eq{font-size:40px;}
+      .typed{font-size:46px;}
+      .typedInput{font-size:46px; width:3ch;}
+      .typedSlot{width: 3ch;}
+      .keypad{max-width:360px; gap:12px;}
+      .key{min-height:74px; font-size:26px; padding:16px 10px;}
+    }
+
+    .judgeMark{
+      position:absolute;
+      top:10px;
+      right:12px;
+      font-size:90px;
+      font-weight:900;
+      color: rgba(220,38,38,0.95);
+      text-shadow: 0 10px 30px rgba(0,0,0,0.55);
+      line-height:1;
+      pointer-events:none;
+      transform:none;
+    }
+    .judgeMark.ok{ color: rgba(34,197,94,0.95); }
+    .judgeMark.ng{ color: rgba(220,38,38,0.95); }
+    .judgeMark.hidden{display:none;}
+
+    .answerLine{
+      margin-top:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+    }
+    .answerPill{
+      display:inline-block;
+      padding:10px 16px;
+      border-radius:999px;
+      background:rgba(17,24,39,0.92);
+      border:1px solid rgba(255,255,255,0.12);
+      color:rgba(229,231,235,0.96);
+      font-weight:900;
+      font-size:24px;
+      letter-spacing:0.5px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      line-height:1;
+    }
+    @media (max-width:420px){
+      .answerPill{font-size:52px;}
+    }
+
+    .answerLabel{
+      font-size:16px;
+      font-weight:800;
+      color:rgba(229,231,235,0.85);
+    }
+    
+    .answerValue{
+      font-size:72px;
+      font-weight:900;
+      line-height:1;
+      letter-spacing:0.5px;
+      margin-left:10px;
+      display:inline-block;
+    }
+    
+    @media (max-width:420px){
+      .answerValue{font-size:60px;}
+    }
+
+    .answerLine.hidden{display:none;}
+    .result{margin:10px 0; font-size:20px; font-weight:800; text-align:center;}
+    .resultMeta{margin-top:10px; font-size:14px; color:var(--muted);}
+
+    .bottomDock{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, rgba(11,16,32,0), rgba(11,16,32,0.75) 25%, rgba(11,16,32,0.97));
+      backdrop-filter: blur(8px);
+      z-index:999;
+    }
+    .dockInner{
+      max-width:720px;
+      margin:0 auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .dockTopRow{
+      display:flex;
+      justify-content:center;
+    }
+
+    .keypad{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+      max-width:420px;
+      margin:0 auto;
+    }
+    .key{
+      background:rgba(17,24,39,0.88);
+      border:1px solid rgba(255,255,255,0.10);
+      color:var(--text);
+      border-radius:16px;
+      padding:18px 12px;
+      font-size:28px;
+      font-weight:900;
+      cursor:pointer;
+      min-height:80px;
+      aspect-ratio:1 / 1;
+    }
+
+    .key:active{transform: translateY(1px);}
+    .key.ok{
+      background:rgba(37,99,235,0.9);
+      border-color:rgba(255,255,255,0.14);
+    }
+    .key.next{
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.10);
+      color:rgba(229,231,235,0.92);
+      font-size:20px;
+    }
+    .key:disabled{
+      opacity:0.45;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    #screenHistory{min-height:100%; display:flex; flex-direction:column;}
+    #screenHistory[hidden]{display:none !important;}
+    #screenHistory.hidden{display:none !important;}
+
+    .tableWrap{
+      overflow:auto;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.06);
+      background:rgba(17,24,39,0.85);
+    }
+    table{width:100%; border-collapse:collapse; min-width:640px; background:rgba(17,24,39,0.85);}
+    th,td{padding:10px 10px; border-bottom:1px solid rgba(255,255,255,0.06); text-align:left; vertical-align:top; background:rgba(17,24,39,0.85);}
+    th{font-size:12px; color:var(--muted); font-weight:700; position:sticky; top:0;}
+    td{font-size:14px;}
+    .right{text-align:right;}
+    .small{font-size:12px; color:var(--muted);}
+    .pill{display:inline-block; padding:2px 8px; border-radius:999px; background:rgba(255,255,255,0.08); font-size:12px; color:var(--muted);}
+    .muted{color:var(--muted);}
+    .historyActions{display:flex; gap:10px; flex-wrap:wrap;}
+
+    .historyTabs{flex-wrap:nowrap;}
+    .historyTabs .segBtn{flex:1; min-width:0; text-align:center; padding:10px 10px;}
+    .tabBtn{min-width:0;}
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.65);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      z-index:9999;
+    }
+    .modal.hidden{display:none;}
+    .modalBox{
+      background:rgba(17,24,39,0.95);
+      border:1px solid rgba(255,255,255,0.10);
+      border-radius:22px;
+      padding:16px;
+      max-width:520px;
+      width:100%;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+    }
+    .modalTitle{font-size:18px; font-weight:800; margin-bottom:10px;}
+    .modalText{font-size:14px; color:var(--muted); margin-bottom:14px; line-height:1.6;}
+    .modalActions{display:flex; gap:10px; flex-wrap:wrap;}
+    .modalActions .btn{flex:1; min-width:160px;}
+
+    .btn.mini{
+      font-size:14px;
+      padding:8px 10px;
+      border-radius:12px;
+    }
+    
+    .sessionBtns{
+      display:flex;
+      gap:8px;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    
+    .modalBox.large{
+      max-width:720px;
+    }
+    .sessionDetail{
+      max-height:60vh;
+      overflow:auto;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(17,24,39,0.60);
+    }
+    .sessionDetail table{
+      width:100%;
+      min-width:0;
+      border-collapse:collapse;
+    }
+    .sessionDetail th, .sessionDetail td{
+      padding:10px 10px;
+      border-bottom:1px solid rgba(255,255,255,0.06);
+    }
+    .sessionDetail th{
+      font-size:12px;
+      color:var(--muted);
+      position:sticky;
+      top:0;
+      background:rgba(17,24,39,0.92);
+    }
+    .sessionDetail .markOk{color:rgba(34,197,94,0.95); font-weight:900;}
+    .sessionDetail .markNg{color:rgba(220,38,38,0.95); font-weight:900;}
+
+  </style>
+</head>
+<body>
+  <div class='app'>
+    <header class='topbar'>
+      <div class='title'>フラッシュけいさん</div>
+      <button id='btnToSettings' class='btn ghost' type='button'>せってい</button>
+    </header>
+
+    <main class='main'>
+      <section id='screenSettings' class='screen'>
+        <h1 class='h1'>せってい</h1>
+
+        <div class='card'>
+          <div class='label'>しゅつだいの しかた</div>
+          <div class='seg'>
+            <button class='segBtn' data-opmode='add' type='button'>たしざん</button>
+            <button class='segBtn' data-opmode='sub' type='button'>ひきざん</button>
+            <button class='segBtn' data-opmode='mix' type='button'>まぜて</button>
+          </div>
+        </div>
+
+        <div class='card'>
+          <div class='label'>かずの はんい</div>
+          <div class='seg'>
+            <button class='segBtn' data-range='c2a' type='button'>ひとけた（1〜9）</button>
+            <button class='segBtn' data-range='c2b' type='button'>1〜19</button>
+            <button class='segBtn' data-range='c10lead' type='button'>10〜19が さき</button>
+            <button class='segBtn' data-range='c3' type='button'>どちらか にけた（10〜99）</button>
+            <button class='segBtn' data-range='c4' type='button'>にけたどうし（10〜99）</button>
+          </div>
+          <div class='hint'>かずの はんいは ひとつだけ えらべます</div>
+        </div>
+
+        <div class='card'>
+          <div class='label'>にゅうりょく ほうほう</div>
+          <div class='seg'>
+            <button class='segBtn' data-inputmode='keypad' type='button'>キーパッド</button>
+            <button class='segBtn' data-inputmode='keyboard' type='button'>キーボード・おんせい</button>
+          </div>
+        </div>
+
+        <div class='card' id='sum10Card'>
+          <div class='row'>
+            <div>
+              <div class='label'>ごうけい 10まで</div>
+              <div class='hint'>たしざん か まぜて のとき</div>
+            </div>
+            <label class='switch'>
+              <input id='sum10' type='checkbox' />
+              <span class='slider'></span>
+            </label>
+          </div>
+        </div>
+
+        <div class='card'>
+          <div class='label'>がくしゅう りれき</div>
+          <div class='historyActions'>
+            <button id='btnViewHistory' class='btn' type='button'>りれき みる</button>
+          </div>
+          <div class='hint'>この たんまつの りれきを かくにん できます</div>
+        </div>
+
+        <button id='btnStart' class='btn primary big' type='button'>はじめる</button>
+      </section>
+
+      <section id='screenQuiz' class='screen hidden' hidden>
+        <div class='progressRow'>
+          <div id='progressText' class='progressText'></div>
+          <div id='progressText2' class='progressText'></div>
+        </div>
+        <div class='progressBar'><div id='progressFill' class='progressFill'></div></div>
+
+        <div class='quizCard' id='quizCard'>
+          <div id="judge" class="judgeMark hidden" aria-live="polite"></div>
+          
+          <div class='exprRow'>
+            <div class='exprLeft'>
+              <div id='problem' class='problem'>-</div>
+              <div class='eq'>=</div>
+            </div>
+            <div class='typedSlot'>
+              <div id='typed' class='typed muted'> </div>
+              <input
+                id='typedInput'
+                class='typedInput hidden'
+                type='text'
+                inputmode='numeric'
+                enterkeyhint='done'
+                autocomplete='off'
+                autocapitalize='off'
+                spellcheck='false'
+                aria-label='こたえ'
+              />
+            </div>
+          </div>
+
+          <div id='answerLine' class='answerLine hidden'>
+            <span class='answerPill'>
+              <span class='answerLabel'>こたえ:</span>
+              <span id='answerValue' class='answerValue'></span>
+            </span>
+          </div>
+
+        </div>
+
+        <div id='result' class='result hidden'></div>
+        <button id='btnBackToSettings' class='btn ghost hidden' type='button'>せっていに もどる</button>
+      </section>
+
+      <section id='screenHistory' class='screen hidden' hidden>
+        <h1 class='h1'>りれき</h1>
+
+        <div class='card'>
+          <div id='historySummary' class='small muted'></div>
+          <div class='historyActions' style='margin-top:10px;'>
+            <button id='btnResetHistory2' class='btn subtle' type='button'>もんだい りれき りせっと</button>
+            <button id='btnResetSessions' class='btn subtle' type='button'>50もん きろく りせっと</button>
+          </div>
+          <div class='hint'>りれきは この たんまつの localStorage に ほぞん されています</div>
+        </div>
+
+        <div class='card'>
+          <div class='label'>ひょうじ きりかえ</div>
+          <div class='seg historyTabs'>
+            <button class='segBtn tabBtn active' data-historytab='problems' type='button'>もんだい べつ</button>
+            <button class='segBtn tabBtn' data-historytab='sessions' type='button'>50もん きろく</button>
+          </div>
+          <div class='hint'>タブで ひょうじを きりかえ できます</div>
+        </div>
+
+        <div id='historyPanelProblems'>
+          <div class='card'>
+            <div class='label'>もんだい べつ（せいかいりつ ひくい じゅん）</div>
+            <div class='tableWrap'>
+              <table>
+                <thead>
+                  <tr>
+                    <th>もんだい</th>
+                    <th class='right'>でたかず</th>
+                    <th class='right'>できたかず</th>
+                    <th class='right'>せいかいりつ</th>
+                    <th>さいご</th>
+                    <th class='right'>おもみ</th>
+                  </tr>
+                </thead>
+                <tbody id='historyTable'></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id='historyPanelSessions' class='hidden'>
+          <div class='card'>
+            <div class='label'>50もん きろく（さいきん じゅん）</div>
+            <div class='tableWrap'>
+              <table>
+                <thead>
+                  <tr>
+                    <th>いつ</th>
+                    <th class='right'>もん</th>
+                    <th class='right'>できた</th>
+                    <th class='right'>せいかいりつ</th>
+                    <th class='right'>じかん</th>
+                    <th>せってい</th>
+                    <th class='right'>そうさ</th>
+                  </tr>
+                </thead>
+                <tbody id='sessionTable'></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class='historyActions'>
+          <button id='btnBackFromHistory' class='btn ghost big' type='button'>せっていに もどる</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class='footer'>
+      <div id='status' class='status'></div>
+    </footer>
+  </div>
+
+  <div class='bottomDock hidden' id='bottomDock'>
+    <div class='dockInner'>
+      <div class='dockTopRow'>
+        <button id='btnClearAll' class='btn' type='button'>ぜんぶ けす</button>
+      </div>
+
+      <div class='keypad' id='keypad'>
+        <button class='key' data-key='7' type='button'>7</button>
+        <button class='key' data-key='8' type='button'>8</button>
+        <button class='key' data-key='9' type='button'>9</button>
+
+        <button class='key' data-key='4' type='button'>4</button>
+        <button class='key' data-key='5' type='button'>5</button>
+        <button class='key' data-key='6' type='button'>6</button>
+
+        <button class='key' data-key='1' type='button'>1</button>
+        <button class='key' data-key='2' type='button'>2</button>
+        <button class='key' data-key='3' type='button'>3</button>
+
+        <button class='key next' data-key='next' type='button' disabled>つぎ</button>
+        <button class='key' data-key='0' type='button'>0</button>
+        <button class='key ok' data-key='ok' type='button'>OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div id='confirm' class='modal hidden' role='dialog' aria-modal='true' aria-labelledby='confirmTitle'>
+    <div class='modalBox'>
+      <div id='confirmTitle' class='modalTitle'>りせっと する？</div>
+      <div id='confirmText' class='modalText'></div>
+      <div class='modalActions'>
+        <button id='btnConfirmCancel' class='btn' type='button'>やめる</button>
+        <button id='btnConfirmOk' class='btn subtle' type='button'>りせっと する</button>
+      </div>
+    </div>
+  </div>
+
+  <div id='sessionModal' class='modal hidden' role='dialog' aria-modal='true' aria-labelledby='sessionModalTitle'>
+    <div class='modalBox large'>
+      <div id='sessionModalTitle' class='modalTitle'>50もん の もんだい</div>
+      <div id='sessionModalMeta' class='modalText'></div>
+  
+      <div id='sessionModalBody' class='sessionDetail'></div>
+  
+      <div class='modalActions' style='margin-top:12px;'>
+        <button id='btnSessionClose' class='btn' type='button'>とじる</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    ;(() => {
+      const LS_SETTINGS = 'flash_math_settings_v1'
+      const LS_HISTORY  = 'flash_math_history_v1'
+      const LS_SESSIONS = 'flash_math_sessions_v1'
+
+      const $ = (id) => document.getElementById(id)
+
+      const elSettings = $('screenSettings')
+      const elQuiz = $('screenQuiz')
+      const elHistory = $('screenHistory')
+
+      const elProblem = $('problem')
+      const elTyped = $('typed')
+      const elTypedInput = $('typedInput')
+      const elStatus = $('status')
+
+      const elProgressText = $('progressText')
+      const elProgressText2 = $('progressText2')
+      const elProgressFill = $('progressFill')
+
+      const elAnswerLine = $('answerLine')
+      const elAnswerValue = $('answerValue')
+      const elJudge = $('judge')
+
+      const btnToSettings = $('btnToSettings')
+      const btnStart = $('btnStart')
+      const btnBackToSettings = $('btnBackToSettings')
+
+      const btnViewHistory = $('btnViewHistory')
+      const btnBackFromHistory = $('btnBackFromHistory')
+
+      const btnResetHistory2 = $('btnResetHistory2')
+      const btnResetSessions = $('btnResetSessions')
+
+      const sum10Card = $('sum10Card')
+      const chkSum10 = $('sum10')
+
+      const elResult = $('result')
+
+      const elHistoryTable = $('historyTable')
+      const elSessionTable = $('sessionTable')
+      const elHistorySummary = $('historySummary')
+      const elHistoryPanelProblems = $('historyPanelProblems')
+      const elHistoryPanelSessions = $('historyPanelSessions')
+
+      const elConfirm = $('confirm')
+      const elConfirmText = $('confirmText')
+      const btnConfirmCancel = $('btnConfirmCancel')
+      const btnConfirmOk = $('btnConfirmOk')
+
+      const elSessionModal = $('sessionModal')
+      const elSessionModalMeta = $('sessionModalMeta')
+      const elSessionModalBody = $('sessionModalBody')
+      const btnSessionClose = $('btnSessionClose')
+
+      const bottomDock = $('bottomDock')
+      const keypad = $('keypad')
+      const btnClearAll = $('btnClearAll')
+
+      const LIMIT = 50
+
+      const state = {
+        settings: { opmode: 'add', range: 'c2a', sum10: false, inputMode: 'keypad' },
+        history: {},
+        sessions: [],
+        current: null,
+        prevKey: null,
+        phase: 'settings',
+        sessionTotal: 0,
+        sessionCorrect: 0,
+        sessionSaved: false,
+        sessionStartAt: 0,
+        historyTab: 'problems',
+        pendingReset: null,
+        input: '',
+        locked: false,
+        judged: false,
+        sessionItems: []
+      }
+
+      function loadSettings() {
+        try {
+          const s = JSON.parse(localStorage.getItem(LS_SETTINGS) || 'null')
+          if (s && typeof s === 'object') state.settings = { ...state.settings, ...s }
+        } catch {}
+      }
+      function saveSettings() {
+        localStorage.setItem(LS_SETTINGS, JSON.stringify(state.settings))
+      }
+      function loadHistory() {
+        try {
+          const h = JSON.parse(localStorage.getItem(LS_HISTORY) || '{}')
+          if (h && typeof h === 'object') state.history = h
+        } catch { state.history = {} }
+      }
+      function saveHistory() {
+        localStorage.setItem(LS_HISTORY, JSON.stringify(state.history))
+      }
+      function loadSessions() {
+        try {
+          const s = JSON.parse(localStorage.getItem(LS_SESSIONS) || '[]')
+          state.sessions = Array.isArray(s) ? s : []
+        } catch { state.sessions = [] }
+      }
+      function saveSessions() {
+        localStorage.setItem(LS_SESSIONS, JSON.stringify(state.sessions))
+      }
+
+      function setStatus(msg) { elStatus.textContent = msg || '' }
+
+      function setActiveSeg(selector, value, attr) {
+        document.querySelectorAll(selector).forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute(attr) === String(value))
+        })
+      }
+
+      function isKeyboardMode() {
+        return state.settings.inputMode === 'keyboard'
+      }
+
+      function normalizeNumericInput(value) {
+        return String(value || '')
+          .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 65248))
+          .replace(/[^0-9]/g, '')
+          .slice(0, 4)
+      }
+
+      function showSettings() {
+        state.phase = 'settings'
+        elHistory.classList.add('hidden')
+        elHistory.setAttribute('hidden','')
+        elQuiz.classList.add('hidden')
+        elQuiz.setAttribute('hidden','')
+        elSettings.classList.remove('hidden')
+        btnToSettings.textContent = 'せってい'
+        bottomDock.classList.add('hidden')
+        setStatus('')
+      }
+
+      function showQuiz() {
+        state.phase = 'question'
+        elHistory.classList.add('hidden')
+        elHistory.setAttribute('hidden','')
+        elSettings.classList.add('hidden')
+        elQuiz.classList.remove('hidden')
+        elQuiz.removeAttribute('hidden')
+        btnToSettings.textContent = 'せってい'
+        bottomDock.classList.toggle('hidden', isKeyboardMode())
+        setStatus('')
+        syncBottomPadding()
+      }
+
+      function showHistory() {
+        state.phase = 'history'
+        elSettings.classList.add('hidden')
+        elQuiz.classList.add('hidden')
+        elQuiz.setAttribute('hidden','')
+        elHistory.classList.remove('hidden')
+        elHistory.removeAttribute('hidden')
+        btnToSettings.textContent = 'せってい'
+        bottomDock.classList.add('hidden')
+        setStatus('')
+        renderHistory()
+        renderSessions()
+        setHistoryTab(state.historyTab || 'problems')
+      }
+
+      function syncBottomPadding() {
+        try {
+          const h = bottomDock.classList.contains('hidden') ? 0 : bottomDock.getBoundingClientRect().height
+          elQuiz.style.paddingBottom = h ? `${h + 14}px` : ''
+        } catch {}
+      }
+
+      window.addEventListener('resize', () => {
+        if (!bottomDock.classList.contains('hidden')) syncBottomPadding()
+      })
+
+      function setHistoryTab(tab) {
+        const t = (tab === 'sessions') ? 'sessions' : 'problems'
+        state.historyTab = t
+        document.querySelectorAll('.tabBtn[data-historytab]').forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-historytab') === t)
+        })
+        if (elHistoryPanelProblems) elHistoryPanelProblems.classList.toggle('hidden', t !== 'problems')
+        if (elHistoryPanelSessions) elHistoryPanelSessions.classList.toggle('hidden', t !== 'sessions')
+      }
+
+      function normalizeUIBySettings() {
+        setActiveSeg('.segBtn[data-opmode]', state.settings.opmode, 'data-opmode')
+        setActiveSeg('.segBtn[data-range]', state.settings.range, 'data-range')
+        setActiveSeg('.segBtn[data-inputmode]', state.settings.inputMode, 'data-inputmode')
+
+        const rangeAllowsSum10 =
+          state.settings.range === 'c2a' ||
+          state.settings.range === 'c2b' ||
+          state.settings.range === 'c3'
+
+        const showSum10 =
+          (state.settings.opmode === 'add' || state.settings.opmode === 'mix') &&
+          rangeAllowsSum10
+
+        sum10Card.classList.toggle('hidden', !showSum10)
+
+        if (!showSum10) state.settings.sum10 = false
+        chkSum10.checked = !!state.settings.sum10
+      }
+
+      function syncInputUI() {
+        const s = String(state.input || '')
+
+        if (isKeyboardMode()) {
+          elTyped.classList.add('hidden')
+          elTypedInput.classList.remove('hidden')
+          if (elTypedInput.value !== s) elTypedInput.value = s
+          elTypedInput.placeholder = ''
+        } else {
+          elTyped.classList.remove('hidden')
+          elTypedInput.classList.add('hidden')
+
+          if (s.length) {
+            elTyped.textContent = s
+            elTyped.classList.remove('muted')
+          } else {
+            elTyped.textContent = ' '
+            elTyped.classList.add('muted')
+          }
+        }
+      }
+
+      function setTypedUI() {
+        syncInputUI()
+      }
+
+      function focusAnswerInput() {
+        if (!isKeyboardMode()) return
+        if (!elTypedInput) return
+
+        try {
+          elTypedInput.focus({ preventScroll: true })
+        } catch {
+          try { elTypedInput.focus() } catch {}
+        }
+      }
+
+      function focusAnswerInputWithFallback() {
+        if (!isKeyboardMode()) return
+
+        focusAnswerInput()
+
+        try {
+          const dummy = document.createElement('input')
+          dummy.type = 'text'
+          dummy.setAttribute('aria-hidden', 'true')
+          dummy.style.position = 'fixed'
+          dummy.style.opacity = '0'
+          dummy.style.pointerEvents = 'none'
+          dummy.style.top = '0'
+          dummy.style.left = '0'
+          dummy.style.width = '1px'
+          dummy.style.height = '1px'
+          document.body.appendChild(dummy)
+
+          dummy.focus()
+          elTypedInput.focus()
+
+          setTimeout(() => {
+            try { document.body.removeChild(dummy) } catch {}
+          }, 0)
+        } catch {}
+      }
+
+      function opSymbol(op) { return op === 'add' ? '+' : '−' }
+      function makeKey(op,left,right) { return `${op}:${left}:${right}` }
+
+      function getHist(key) {
+        const h = state.history[key]
+        if (h && typeof h === 'object') return h
+        const init = { shown: 0, correct: 0, last_at: 0 }
+        state.history[key] = init
+        return init
+      }
+
+      function updateWeight(key, isCorrect){
+        const h = getHist(key)
+        h.shown += 1
+        if(isCorrect) h.correct += 1
+        h.last_at = Date.now()
+      }
+
+      function calcWeightByAccuracy(key){
+        const h0 = state.history[key]
+        const shown = h0 ? (Number(h0.shown) || 0) : 0
+        const correct = h0 ? (Number(h0.correct) || 0) : 0
+        const last = h0 ? (Number(h0.last_at) || 0) : 0
+      
+        const alpha = 1
+        const beta  = 1
+        const p = (correct + alpha) / (shown + alpha + beta)
+        const diff = 1 - p
+      
+        const wMin = 0.02
+        const wMax = 3.0
+        const gamma = 2.2
+      
+        let w = wMin + (wMax - wMin) * Math.pow(diff, gamma)
+      
+        if (shown === 0) w = Math.max(w, 0.6)
+      
+        if (last > 0){
+          const days = (Date.now() - last) / 86400000
+          const rec = 1 + Math.min(1, days / 3)
+          w *= rec
+        }
+      
+        return w
+      }
+
+      function getRangeSpec() {
+        const r = state.settings.range
+      
+        if (r === 'c2a') {
+          return { mode: 'both', aMin: 1, aMax: 9, bMin: 1, bMax: 9 }
+        }
+      
+        if (r === 'c2b') {
+          return { mode: 'both', aMin: 1, aMax: 19, bMin: 1, bMax: 19 }
+        }
+      
+        if (r === 'c10lead') {
+          return { mode: 'tenlead', aMin: 10, aMax: 19, bMin: 1, bMax: 9 }
+        }
+      
+        if (r === 'c3') {
+          return { mode: 'one2digit', aMin: 10, aMax: 99, bMin: 1, bMax: 9 }
+        }
+      
+        if (r === 'c4') {
+          return { mode: 'both2digit', aMin: 10, aMax: 99, bMin: 10, bMax: 99 }
+        }
+      
+        return { mode: 'both', aMin: 1, aMax: 9, bMin: 1, bMax: 9 }
+      }
+
+      function listCandidatesForOp(op) {
+        const spec = getRangeSpec()
+        const sum10 = !!state.settings.sum10
+        const out = []
+      
+        if (spec.mode === 'both') {
+          for (let a = spec.aMin; a <= spec.aMax; a++) {
+            for (let b = spec.bMin; b <= spec.bMax; b++) {
+              if (op === 'add') {
+                const ans = a + b
+                if (sum10 && ans > 10) continue
+                out.push({ op, left: a, right: b, answer: ans, key: makeKey(op, a, b) })
+              } else {
+                const left = Math.max(a, b)
+                const right = Math.min(a, b)
+                out.push({ op, left, right, answer: left - right, key: makeKey(op, left, right) })
+              }
+            }
+          }
+        }
+      
+        else if (spec.mode === 'one2digit') {
+          for (let two = spec.aMin; two <= spec.aMax; two++) {
+            for (let one = spec.bMin; one <= spec.bMax; one++) {
+              if (op === 'add') {
+                let a = two, b = one
+                let ans = a + b
+                if (!(sum10 && ans > 10)) {
+                  out.push({ op, left: a, right: b, answer: ans, key: makeKey(op, a, b) })
+                }
+      
+                a = one
+                b = two
+                ans = a + b
+                if (!(sum10 && ans > 10)) {
+                  out.push({ op, left: a, right: b, answer: ans, key: makeKey(op, a, b) })
+                }
+              } else {
+                let left = two
+                let right = one
+                if (left < right) [left, right] = [right, left]
+                out.push({ op, left, right, answer: left - right, key: makeKey(op, left, right) })
+      
+                left = one
+                right = two
+                if (left < right) [left, right] = [right, left]
+                out.push({ op, left, right, answer: left - right, key: makeKey(op, left, right) })
+              }
+            }
+          }
+        }
+      
+        else if (spec.mode === 'tenlead') {
+          for (let a = spec.aMin; a <= spec.aMax; a++) {
+            for (let b = spec.bMin; b <= spec.bMax; b++) {
+              if (op === 'add') {
+                const ans = a + b
+                if (sum10 && ans > 10) continue
+                out.push({ op, left: a, right: b, answer: ans, key: makeKey(op, a, b) })
+              } else {
+                if (a >= b) {
+                  out.push({ op, left: a, right: b, answer: a - b, key: makeKey(op, a, b) })
+                }
+              }
+            }
+          }
+        }
+      
+        else if (spec.mode === 'both2digit') {
+          for (let a = spec.aMin; a <= spec.aMax; a++) {
+            for (let b = spec.bMin; b <= spec.bMax; b++) {
+              if (op === 'add') {
+                const ans = a + b
+                out.push({ op, left: a, right: b, answer: ans, key: makeKey(op, a, b) })
+              } else {
+                const left = Math.max(a, b)
+                const right = Math.min(a, b)
+                out.push({ op, left, right, answer: left - right, key: makeKey(op, left, right) })
+              }
+            }
+          }
+        }
+      
+        if (op === 'sub' || spec.mode === 'one2digit' || spec.mode === 'both2digit') {
+          const seen = new Set()
+          const uniq = []
+          for (const p of out) {
+            if (seen.has(p.key)) continue
+            seen.add(p.key)
+            uniq.push(p)
+          }
+          return uniq
+        }
+      
+        return out
+      }
+
+      function listCandidatesBySettings() {
+        const m = state.settings.opmode
+        if (m === 'add') return listCandidatesForOp('add')
+        if (m === 'sub') return listCandidatesForOp('sub')
+        return listCandidatesForOp('add').concat(listCandidatesForOp('sub'))
+      }
+
+      function normalizePairForAdd(p){
+        const a = Number(p.left), b = Number(p.right)
+        return (a <= b) ? { x:a, y:b } : { x:b, y:a }
+      }
+      
+      function isTooSimilarToPrev(prev, c, deltaMax){
+        if (!prev || !c) return false
+        if (prev.op !== c.op) return false
+      
+        const dMax = Number.isFinite(deltaMax) ? deltaMax : 1
+      
+        if (c.op === 'add'){
+          const p0 = normalizePairForAdd(prev)
+          const c0 = normalizePairForAdd(c)
+          if (p0.x === c0.x && Math.abs(p0.y - c0.y) <= dMax) return true
+          if (p0.y === c0.y && Math.abs(p0.x - c0.x) <= dMax) return true
+          return false
+        }
+      
+        if (c.op === 'sub'){
+          if (Number(prev.left) === Number(c.left) && Math.abs(Number(prev.right) - Number(c.right)) <= dMax) return true
+          if (Number(prev.right) === Number(c.right) && Math.abs(Number(prev.left) - Number(c.left)) <= dMax) return true
+          return false
+        }
+      
+        return false
+      }
+
+      function weightedPick(candidates) {
+        const prev = state.current || null
+        const deltaMax = 1
+      
+        const filtered = candidates.filter(c => {
+          if (c.key === state.prevKey) return false
+          if (prev && isTooSimilarToPrev(prev, c, deltaMax)) return false
+          return true
+        })
+      
+        const pool = filtered.length ? filtered : candidates
+
+        let total = 0
+        const weights = new Array(pool.length)
+        for (let i = 0; i < pool.length; i++) {
+          const w = calcWeightByAccuracy(pool[i].key)
+          weights[i] = w
+          total += w
+        }
+        let r = Math.random() * total
+        for (let i = 0; i < pool.length; i++) {
+          r -= weights[i]
+          if (r <= 0) return pool[i]
+        }
+        return pool[pool.length - 1]
+      }
+
+      function formatProblem(p) { return `${p.left} ${opSymbol(p.op)} ${p.right}` }
+
+      function updateProgressUI() {
+        const done = state.sessionTotal
+        const current = Math.min(done + 1, LIMIT)
+        const remainingAll = Math.max(LIMIT - done, 0)
+        elProgressText.innerHTML = `いま <span class='numBig'>${current}</span>もんめ / <span class='numBig'>${LIMIT}</span>もん`
+        elProgressText2.innerHTML = `のこり <span class='numBig'>${remainingAll}</span>もん`
+        const pct = Math.max(0, Math.min(100, (done / LIMIT) * 100))
+        elProgressFill.style.width = `${pct}%`
+      }
+
+      function setAnswerVisible(show, answerValue) {
+        if (!show) {
+          elAnswerLine.classList.add('hidden')
+          elAnswerValue.textContent = ''
+          return
+        }
+        elAnswerValue.textContent = String(answerValue)
+        elAnswerLine.classList.remove('hidden')
+      }
+
+      function lockInput(lock) {
+        state.locked = !!lock
+        keypad.querySelectorAll('button').forEach(b => b.disabled = state.locked || b.getAttribute('data-key') === 'next')
+        btnClearAll.disabled = state.locked
+        if (elTypedInput) elTypedInput.disabled = state.locked
+      }
+
+      function setNextEnabled(enabled) {
+        const b = keypad.querySelector("button[data-key='next']")
+        if (b) b.disabled = !enabled
+      }
+
+      function startQuestion() {
+        hideJudge()
+        state.phase = 'question'
+        state.input = ''
+        state.judged = false
+        setTypedUI()
+        setAnswerVisible(false, '')
+        lockInput(false)
+        setNextEnabled(false)
+        updateProgressUI()
+
+        const candidates = listCandidatesBySettings()
+        if (!candidates.length) {
+          setStatus('もんだいが ありません。せっていを みなおしてね')
+          showSettings()
+          return
+        }
+
+        const p = weightedPick(candidates)
+        state.current = p
+        state.prevKey = p.key
+
+        elProblem.textContent = formatProblem(p)
+        elResult.classList.add('hidden')
+        btnBackToSettings.classList.add('hidden')
+
+        if (isKeyboardMode()) {
+          setTimeout(() => {
+            if (!state.locked && !state.judged) focusAnswerInput()
+          }, 0)
+        }
+      }
+
+      let judgeTimer = null
+
+      function showJudge(isCorrect){
+        if(!elJudge) return
+      
+        elJudge.textContent = isCorrect ? '〇' : '✖'
+        elJudge.classList.remove('ok','ng','hidden')
+        elJudge.classList.add(isCorrect ? 'ok' : 'ng')
+      
+        if(judgeTimer) clearTimeout(judgeTimer)
+        judgeTimer = setTimeout(() => {
+          elJudge.classList.add('hidden')
+          judgeTimer = null
+        }, 3000)
+      }
+
+      function hideJudge(){
+        if(!elJudge) return
+        elJudge.classList.add('hidden')
+        if(judgeTimer) clearTimeout(judgeTimer)
+        judgeTimer = null
+      }
+
+      function formatDuration(ms) {
+        const sec = Math.max(0, Math.floor(ms / 1000))
+        const m = Math.floor(sec / 60)
+        const s = sec % 60
+        if (m <= 0) return `${s} びょう`
+        return `${m} ふん ${String(s).padStart(2,'0')} びょう`
+      }
+
+      function stop() {
+        state.phase = 'stopped'
+        state.current = null
+        lockInput(true)
+        setNextEnabled(false)
+
+        const durationMs = state.sessionStartAt ? (Date.now() - state.sessionStartAt) : 0
+
+        if (state.sessionTotal > 0 && !state.sessionSaved) {
+          const rec = {
+            id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
+            at: Date.now(),
+            total: state.sessionTotal,
+            correct: state.sessionCorrect,
+            duration_ms: durationMs,
+            settings: { ...state.settings },
+            items: state.sessionItems.slice()
+          }
+          state.sessions.unshift(rec)
+          state.sessions = state.sessions.slice(0, 200)
+          saveSessions()
+          state.sessionSaved = true
+        }
+
+        if (state.sessionTotal > 0) {
+          const durText = durationMs ? formatDuration(durationMs) : '-'
+          elResult.innerHTML =
+            `<div class='resultLine'><span class='numHuge'>${state.sessionTotal}</span>もん おわり！</div>` +
+            `<div class='resultLine'><span class='numHuge'>${state.sessionCorrect}</span>もん できたよ！</div>` +
+            `<div class='resultMeta'>じかん: ${durText}</div>`
+          elResult.classList.remove('hidden')
+          btnBackToSettings.classList.remove('hidden')
+        }
+      }
+
+      function submitAnswer() {
+        if (!state.current) return
+        if (state.locked) return
+        if (state.judged) return
+      
+        const typedRaw = String(state.input || '').trim()
+        if (!typedRaw.length) return
+      
+        const typed = Number(typedRaw)
+        if (!Number.isFinite(typed)) return
+      
+        const correct = (typed === state.current.answer)
+      
+        state.sessionTotal += 1
+        if (correct) state.sessionCorrect += 1
+      
+        showJudge(correct)
+        updateWeight(state.current.key, correct)
+        saveHistory()
+      
+        state.sessionItems.push({
+          key: state.current.key,
+          expr: formatProblem(state.current),
+          correct: correct,
+          typedRaw: typedRaw,
+          typed: typed,
+          answer: state.current.answer
+        })
+        state.judged = true
+      
+        if (correct) {
+          setAnswerVisible(false, '')
+        } else {
+          setAnswerVisible(true, state.current.answer)
+        }
+      
+        lockInput(true)
+        setNextEnabled(true)
+        updateProgressUI()
+      
+        if (state.sessionTotal >= LIMIT) {
+          stop()
+          return
+        }
+      }
+
+      function nextAfterJudge() {
+        if (!state.judged) return
+        if (state.phase === 'stopped') return
+        startQuestion()
+      }
+
+      function appendDigit(d) {
+        if (state.locked) return
+        if (state.judged) return
+        state.input = normalizeNumericInput(String(state.input || '') + d)
+        setTypedUI()
+      }
+
+      function clearAll() {
+        if (state.locked) return
+        if (state.judged) return
+        state.input = ''
+        setTypedUI()
+        if (isKeyboardMode()) focusAnswerInput()
+      }
+
+      function formatJst(ts) {
+        if (!ts) return ''
+        try {
+          const d = new Date(ts)
+          const y = d.getFullYear()
+          const m = String(d.getMonth() + 1).padStart(2,'0')
+          const day = String(d.getDate()).padStart(2,'0')
+          const hh = String(d.getHours()).padStart(2,'0')
+          const mm = String(d.getMinutes()).padStart(2,'0')
+          return `${y}-${m}-${day} ${hh}:${mm}`
+        } catch { return '' }
+      }
+
+      function parseKey(key) {
+        const parts = String(key).split(':')
+        if (parts.length !== 3) return { op:'', left:'', right:'' }
+        return { op: parts[0], left: parts[1], right: parts[2] }
+      }
+
+      function renderHistory() {
+        loadHistory()
+        loadSessions()
+
+        const entries = Object.entries(state.history)
+          .filter(([k,v]) => v && typeof v === 'object')
+          .map(([k,v]) => ({
+            key: k,
+            shown: Number(v.shown) || 0,
+            correct: Number(v.correct) || 0,
+            weight: calcWeightByAccuracy(k),
+            last_at: Number(v.last_at) || 0
+          }))
+
+        const totalProblems = entries.length
+        const totalShown = entries.reduce((a,e) => a + e.shown, 0)
+        const totalCorrect = entries.reduce((a,e) => a + e.correct, 0)
+
+        elHistorySummary.textContent =
+          `もんだい: ${totalProblems}しゅるい / でた: ${totalShown}かい / できた: ${totalCorrect}かい / 50もん きろく: ${state.sessions.length}かい`
+
+        entries.sort((a,b) => {
+          const ra = a.shown > 0 ? (a.correct / a.shown) : 0
+          const rb = b.shown > 0 ? (b.correct / b.shown) : 0
+          if (ra !== rb) return ra - rb
+          if (b.shown !== a.shown) return b.shown - a.shown
+          return b.last_at - a.last_at
+        })
+
+        if (!entries.length) {
+          elHistoryTable.innerHTML = `<tr><td colspan='6' class='muted'>りれきが ありません</td></tr>`
+          return
+        }
+
+        elHistoryTable.innerHTML = entries.map(e => {
+          const { op, left, right } = parseKey(e.key)
+          const expr = `${left} ${opSymbol(op)} ${right}`
+          const rate = e.shown > 0 ? Math.round((e.correct / e.shown) * 100) : 0
+          const last = formatJst(e.last_at)
+          const w = (typeof e.weight === 'number') ? e.weight.toFixed(3) : String(e.weight)
+          return (
+            `<tr>` +
+              `<td>${expr}</td>` +
+              `<td class='right'>${e.shown}</td>` +
+              `<td class='right'>${e.correct}</td>` +
+              `<td class='right'>${rate}%</td>` +
+              `<td><span class='pill'>${last || '-'}</span></td>` +
+              `<td class='right'>${w}</td>` +
+            `</tr>`
+          )
+        }).join('')
+      }
+
+      function openSessionModal(sessionId){
+        loadSessions()
+        const s = state.sessions.find(x => String(x.id) === String(sessionId))
+        if (!s) return
+      
+        const at = formatJst(s.at)
+        const total = Number(s.total) || 0
+        const correct = Number(s.correct) || 0
+        const rate = total > 0 ? Math.round((correct / total) * 100) : 0
+        const dur = (typeof s.duration_ms === 'number') ? formatDuration(s.duration_ms) : '-'
+      
+        elSessionModalMeta.textContent =
+          `いつ: ${at || '-'} / できた: ${correct}/${total} / せいかいりつ: ${rate}% / じかん: ${dur}`
+      
+        const items = Array.isArray(s.items) ? s.items : []
+      
+        loadHistory()
+        const statsForKey = (key) => {
+          const h = state.history && state.history[key]
+          const shown = h ? (Number(h.shown) || 0) : 0
+          const cor = h ? (Number(h.correct) || 0) : 0
+          const r = (shown > 0) ? `${Math.round((cor / shown) * 100)}%` : '-'
+          return { shown, cor, rate: r }
+        }
+      
+        const rows = items.map((it, idx) => {
+          const key = it && it.key ? String(it.key) : ''
+          const ok = !!(it && it.correct)
+        
+          const expr = (it && it.expr) ? String(it.expr) : (() => {
+            const { op, left, right } = parseKey(key)
+            return `${left} ${opSymbol(op)} ${right}`
+          })()
+        
+          const typedRaw = (it && it.typedRaw != null) ? String(it.typedRaw) : '-'
+          const typedVal = (it && typeof it.typed === 'number' && Number.isFinite(it.typed)) ? String(it.typed) : '-'
+          const ansVal   = (it && it.answer != null) ? String(it.answer) : '-'
+        
+          const markClass = ok ? 'markOk' : 'markNg'
+          const markText = ok ? '〇' : '✖'
+        
+          const st = key ? statsForKey(key) : { shown: 0, cor: 0, rate: '-' }
+        
+          return (
+            `<tr>` +
+              `<td class='right'>${idx + 1}</td>` +
+              `<td>${expr}</td>` +
+              `<td class='right'><span class='${markClass}'>${markText}</span></td>` +
+              `<td class='right'>${typedRaw}</td>` +
+              `<td class='right'>${typedVal}</td>` +
+              `<td class='right'>${ansVal}</td>` +
+              `<td class='right'>${st.shown}</td>` +
+              `<td class='right'>${st.cor}</td>` +
+              `<td class='right'>${st.rate}</td>` +
+            `</tr>`
+          )
+        }).join('')
+
+        elSessionModalBody.innerHTML =
+          `<table>` +
+            `<thead>` +
+              `<tr>` +
+                `<th class='right'>ばんごう</th>` +
+                `<th>もんだい</th>` +
+                `<th class='right'>けっか</th>` +
+                `<th class='right'>input(生)</th>` +
+                `<th class='right'>typed(変換後)</th>` +
+                `<th class='right'>こたえ</th>` +
+                `<th class='right'>でたかず</th>` +
+                `<th class='right'>できたかず</th>` +
+                `<th class='right'>せいかいりつ</th>` +
+              `</tr>` +
+            `</thead>` +
+            `<tbody>` + rows + `</tbody>` +
+          `</table>`
+      
+        elSessionModal.classList.remove('hidden')
+      }
+
+      function closeSessionModal(){
+        elSessionModal.classList.add('hidden')
+        elSessionModalMeta.textContent = ''
+        elSessionModalBody.innerHTML = ''
+      }
+
+      function renderSessions() {
+        loadSessions()
+        if (!state.sessions.length) {
+          elSessionTable.innerHTML = `<tr><td colspan='7' class='muted'>50もん きろくが ありません</td></tr>`
+          return
+        }
+      
+        elSessionTable.innerHTML = state.sessions.map(s => {
+          const at = formatJst(s.at)
+          const total = Number(s.total) || 0
+          const correct = Number(s.correct) || 0
+          const rate = total > 0 ? Math.round((correct / total) * 100) : 0
+          const dur = (typeof s.duration_ms === 'number') ? formatDuration(s.duration_ms) : '-'
+      
+          const st = s.settings || {}
+          const op = st.opmode === 'add' ? 'たし' : (st.opmode === 'sub' ? 'ひき' : 'まぜ')
+          const range =
+            st.range === 'c2a' ? '1-9' :
+            st.range === 'c2b' ? '1-19' :
+            st.range === 'c10lead' ? '10-19がさき' :
+            st.range === 'c3' ? 'どちらか2けた' :
+            st.range === 'c4' ? '2けたどうし' :
+            '-'
+          const sum10 = st.sum10 ? '10まで' : ''
+          const inputMode =
+            st.inputMode === 'keyboard' ? 'キーボード' :
+            st.inputMode === 'keypad' ? 'キーパッド' :
+            ''
+          const settingText = [op, range, sum10, inputMode].filter(Boolean).join(' / ')
+      
+          const id = s.id ? String(s.id) : ''
+          const viewBtn = id
+            ? `<button class='btn subtle mini' data-view-session='${id}' type='button'>もんだい みる</button>`
+            : `<span class='muted'>-</span>`
+      
+          const delBtn = id
+            ? `<button class='btn subtle mini' data-del-session='${id}' type='button'>けす</button>`
+            : `<span class='muted'>-</span>`
+      
+          return (
+            `<tr>` +
+              `<td><span class='pill'>${at || '-'}</span></td>` +
+              `<td class='right'>${total}</td>` +
+              `<td class='right'>${correct}</td>` +
+              `<td class='right'>${rate}%</td>` +
+              `<td class='right'>${dur}</td>` +
+              `<td>${settingText}</td>` +
+              `<td class='right'><div class='sessionBtns'>${viewBtn}${delBtn}</div></td>` +
+            `</tr>`
+          )
+        }).join('')
+      }
+
+      function openConfirm(kind, payload) {
+        state.pendingReset = { kind, payload }
+      
+        if (kind === 'history') elConfirmText.textContent = 'もんだい りれきを ぜんぶ けします。いい？'
+        else if (kind === 'sessions') elConfirmText.textContent = '50もん きろくを ぜんぶ けします。いい？'
+        else if (kind === 'deleteSession') elConfirmText.textContent = 'この 50もん きろくを さくじょ します。いい？'
+        else elConfirmText.textContent = 'じっこう しますか？'
+      
+        elConfirm.classList.remove('hidden')
+      }
+      
+      function closeConfirm() {
+        elConfirm.classList.add('hidden')
+        state.pendingReset = null
+      }
+
+      function resetHistory() {
+        state.history = {}
+        saveHistory()
+        setStatus('もんだい りれきを りせっと しました')
+        if (state.phase === 'history') renderHistory()
+      }
+
+      function resetSessions() {
+        state.sessions = []
+        saveSessions()
+        setStatus('50もん きろくを りせっと しました')
+        if (state.phase === 'history') renderSessions()
+      }
+
+      function deleteSessionById(sessionId, opts) {
+        const skipConfirm = !!(opts && opts.skipConfirm)
+      
+        if (!skipConfirm) {
+          openConfirm('deleteSession', { sessionId })
+          return
+        }
+      
+        loadSessions()
+        const idx = state.sessions.findIndex(s => String(s.id) === String(sessionId))
+        if (idx < 0) return
+      
+        const target = state.sessions[idx]
+        const items = Array.isArray(target.items) ? target.items : []
+      
+        loadHistory()
+        for (const it of items) {
+          const key = it && it.key ? String(it.key) : ''
+          if (!key) continue
+          const h = state.history[key]
+          if (!h || typeof h !== 'object') continue
+      
+          const shown = Math.max((Number(h.shown) || 0) - 1, 0)
+          const correct = Math.max((Number(h.correct) || 0) - (it.correct ? 1 : 0), 0)
+      
+          if (shown <= 0) delete state.history[key]
+          else {
+            h.shown = shown
+            h.correct = Math.min(correct, shown)
+          }
+        }
+        saveHistory()
+      
+        state.sessions.splice(idx, 1)
+        saveSessions()
+      
+        setStatus('1セット さくじょ しました')
+        renderHistory()
+        renderSessions()
+      }
+
+      function wireUI() {
+        document.querySelectorAll('.segBtn[data-opmode]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            state.settings.opmode = btn.getAttribute('data-opmode')
+            if (state.settings.opmode === 'sub') state.settings.sum10 = false
+            saveSettings()
+            normalizeUIBySettings()
+          })
+        })
+
+        document.querySelectorAll('.segBtn[data-range]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            state.settings.range = btn.getAttribute('data-range')
+            saveSettings()
+            normalizeUIBySettings()
+          })
+        })
+
+        document.querySelectorAll('.segBtn[data-inputmode]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            state.settings.inputMode = btn.getAttribute('data-inputmode')
+            saveSettings()
+            normalizeUIBySettings()
+          })
+        })
+
+        chkSum10.addEventListener('change', () => {
+          state.settings.sum10 = chkSum10.checked
+          saveSettings()
+          normalizeUIBySettings()
+        })
+
+        btnStart.addEventListener('click', () => {
+          saveSettings()
+          state.sessionTotal = 0
+          state.sessionCorrect = 0
+          state.sessionSaved = false
+          state.sessionStartAt = Date.now()
+          state.sessionItems = []
+
+          elResult.innerHTML = ''
+          elResult.classList.add('hidden')
+          btnBackToSettings.classList.add('hidden')
+
+          showQuiz()
+          startQuestion()
+
+          if (isKeyboardMode()) {
+            focusAnswerInputWithFallback()
+          }
+        })
+
+        btnToSettings.addEventListener('click', () => {
+          if (state.phase === 'history') { showSettings(); return }
+          if (!elSettings.classList.contains('hidden')) return
+          stop()
+          showSettings()
+        })
+
+        btnViewHistory.addEventListener('click', showHistory)
+        btnBackFromHistory.addEventListener('click', showSettings)
+
+        btnBackToSettings.addEventListener('click', () => {
+          elResult.classList.add('hidden')
+          btnBackToSettings.classList.add('hidden')
+          showSettings()
+        })
+
+        if (btnResetHistory2) btnResetHistory2.addEventListener('click', () => openConfirm('history'))
+        if (btnResetSessions) btnResetSessions.addEventListener('click', () => openConfirm('sessions'))
+
+        document.querySelectorAll('.tabBtn[data-historytab]').forEach(btn => {
+          btn.addEventListener('click', () => setHistoryTab(btn.getAttribute('data-historytab')))
+        })
+
+        btnConfirmCancel.addEventListener('click', closeConfirm)
+        
+        btnConfirmOk.addEventListener('click', () => {
+          const p = state.pendingReset
+          closeConfirm()
+          if (!p) return
+        
+          if (p.kind === 'history') resetHistory()
+          else if (p.kind === 'sessions') resetSessions()
+          else if (p.kind === 'deleteSession') {
+            const id = p.payload && p.payload.sessionId ? p.payload.sessionId : ''
+            if (id) deleteSessionById(id, { skipConfirm: true })
+          }
+        })
+
+        elConfirm.addEventListener('click', (e) => {
+          if (e.target === elConfirm) closeConfirm()
+        })
+
+        btnClearAll.addEventListener('click', clearAll)
+
+        keypad.addEventListener('click', (e) => {
+          const btn = e.target.closest('button')
+          if (!btn) return
+          const k = btn.getAttribute('data-key')
+          if (!k) return
+
+          if (k === 'ok') { submitAnswer(); return }
+          if (k === 'next') { nextAfterJudge(); return }
+          if (/^[0-9]$/.test(k)) { appendDigit(k); return }
+        })
+
+        if (elTypedInput) {
+          elTypedInput.addEventListener('input', () => {
+            if (state.locked || state.judged) {
+              elTypedInput.value = String(state.input || '')
+              return
+            }
+            state.input = normalizeNumericInput(elTypedInput.value)
+            syncInputUI()
+          })
+
+          elTypedInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              submitAnswer()
+            }
+          })
+        }
+
+        elSessionTable.addEventListener('click', (e) => {
+          const v = e.target.closest('button[data-view-session]')
+          if (v) {
+            const id = v.getAttribute('data-view-session')
+            if (id) openSessionModal(id)
+            return
+          }
+        
+          const b = e.target.closest('button[data-del-session]')
+          if (!b) return
+          const id = b.getAttribute('data-del-session')
+          if (!id) return
+          deleteSessionById(id)
+        })
+
+        if (btnSessionClose) btnSessionClose.addEventListener('click', closeSessionModal)
+        if (elSessionModal) {
+          elSessionModal.addEventListener('click', (e) => {
+            if (e.target === elSessionModal) closeSessionModal()
+          })
+        }
+      }
+
+      function init() {
+        loadSettings()
+        loadHistory()
+        loadSessions()
+        wireUI()
+        normalizeUIBySettings()
+        setTypedUI()
+        setStatus('')
+        showSettings()
+      }
+
+      init()
+    })()
+  </script>
+</body>
+</html>
