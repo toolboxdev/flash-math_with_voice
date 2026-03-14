@@ -1247,7 +1247,9 @@
 
         if (isKeyboardMode()) {
           setTimeout(() => {
-            if (!state.locked && !state.judged) focusAnswerInput()
+            if (!state.locked && !state.judged) {
+              focusAnswerInputWithFallback()
+            }
           }, 0)
         }
       }
@@ -1386,7 +1388,16 @@
       function nextAfterJudge() {
         if (!state.judged) return
         if (state.phase === 'stopped') return
+      
         startQuestion()
+      
+        if (isKeyboardMode()) {
+          setTimeout(() => {
+            if (state.phase !== 'question') return
+            if (state.locked) return
+            focusAnswerInputWithFallback()
+          }, 0)
+        }
       }
 
       function appendDigit(d) {
