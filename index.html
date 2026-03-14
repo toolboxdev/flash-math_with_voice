@@ -753,8 +753,7 @@
         locked: false,
         judged: false,
         sessionItems: [],
-        autoNextTimer: null
-      }
+     }
 
       function loadSettings() {
         try {
@@ -1219,7 +1218,6 @@
       }
 
       function startQuestion() {
-        clearAutoNextTimer()
         hideJudge()
         state.phase = 'question'
         state.input = ''
@@ -1270,13 +1268,6 @@
         judgeTimer = null
       }
 
-      function clearAutoNextTimer() {
-        if (state.autoNextTimer) {
-          clearTimeout(state.autoNextTimer)
-          state.autoNextTimer = null
-        }
-      }
-
       function formatDuration(ms) {
         const sec = Math.max(0, Math.floor(ms / 1000))
         const m = Math.floor(sec / 60)
@@ -1286,7 +1277,6 @@
       }
 
       function stop() {
-        clearAutoNextTimer()
         state.phase = 'stopped'
         state.current = null
         lockInput(true)
@@ -1367,30 +1357,17 @@
           return
         }
       
-       if (isKeyboardMode()) {
-          clearAutoNextTimer()
-          state.autoNextTimer = setTimeout(() => {
-            state.autoNextTimer = null
-            if (state.phase === 'stopped') return
-            if (!state.judged) return
-      
-            startQuestion()
-      
-            requestAnimationFrame(() => {
-              requestAnimationFrame(() => {
-                if (state.phase !== 'question') return
-                if (state.locked) return
-                focusAnswerInputWithFallback()
-              })
-            })
-          }, 1000)
-        }
       }
 
       function nextAfterJudge() {
         if (!state.judged) return
         if (state.phase === 'stopped') return
+      
         startQuestion()
+      
+        if (isKeyboardMode()) {
+          focusAnswerInputWithFallback()
+        }
       }
 
       function appendDigit(d) {
