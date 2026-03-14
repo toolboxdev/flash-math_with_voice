@@ -321,6 +321,34 @@
       transform:none;
     }
 
+    @media (min-width: 768px) and (orientation: portrait) {
+      .keypad{
+        max-width: 520px;
+        gap: 18px;
+      }
+    
+      .key{
+        min-height: 110px;
+        font-size: 36px;
+        padding: 22px 14px;
+        border-radius: 20px;
+      }
+    
+      .key.next{
+        font-size: 26px;
+      }
+    
+      .dockInner{
+        gap: 14px;
+      }
+    
+      #btnClearAll{
+        font-size: 22px;
+        padding: 14px 18px;
+        border-radius: 18px;
+      }
+    }
+
     #screenHistory{min-height:100%; display:flex; flex-direction:column;}
     #screenHistory[hidden]{display:none !important;}
     #screenHistory.hidden{display:none !important;}
@@ -499,7 +527,6 @@
                 id='typedInput'
                 class='typedInput hidden'
                 type='text'
-                inputmode='numeric'
                 enterkeyhint='done'
                 autocomplete='off'
                 autocapitalize='off'
