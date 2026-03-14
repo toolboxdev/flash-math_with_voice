@@ -546,6 +546,7 @@
         </div>
 
         <div id='result' class='result hidden'></div>
+        <button id='btnNextInline' class='btn primary big hidden' type='button'>つぎ</button>
         <button id='btnBackToSettings' class='btn ghost hidden' type='button'>せっていに もどる</button>
       </section>
 
@@ -733,6 +734,8 @@
       const bottomDock = $('bottomDock')
       const keypad = $('keypad')
       const btnClearAll = $('btnClearAll')
+
+      const btnNextInline = $('btnNextInline')
 
       const LIMIT = 50
 
@@ -1241,6 +1244,7 @@
 
         elProblem.textContent = formatProblem(p)
         elResult.classList.add('hidden')
+        btnNextInline.classList.add('hidden')
         btnBackToSettings.classList.add('hidden')
 
       }
@@ -1351,6 +1355,10 @@
         lockInput(true)
         setNextEnabled(true)
         updateProgressUI()
+
+        if (isKeyboardMode()) {
+          btnNextInline.classList.remove('hidden')
+        }
       
         if (state.sessionTotal >= LIMIT) {
           stop()
@@ -1788,6 +1796,12 @@
               e.preventDefault()
               submitAnswer()
             }
+          })
+        }
+
+        if (btnNextInline) {
+          btnNextInline.addEventListener('click', () => {
+            nextAfterJudge()
           })
         }
 
