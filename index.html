@@ -174,7 +174,7 @@
       font-weight:900;
       letter-spacing:2px;
       line-height:1;
-      min-width:1ch;
+      min-width:4ch;
       text-align:left;
       color:var(--text);
       background:transparent;
@@ -192,7 +192,7 @@
       .problem{font-size:46px;}
       .eq{font-size:40px;}
       .typed{font-size:46px;}
-      .typedInput{font-size:46px; width:3ch;}
+      .typedInput{font-size:46px; width:4ch; min-width:4ch;}
       .typedSlot{width: 3ch;}
       .keypad{max-width:360px; gap:12px;}
       .key{min-height:74px; font-size:26px; padding:16px 10px;}
@@ -752,7 +752,8 @@
         input: '',
         locked: false,
         judged: false,
-        sessionItems: []
+        sessionItems: [],
+        autoNextTimer: null
       }
 
       function loadSettings() {
@@ -1182,10 +1183,15 @@
 
       function updateProgressUI() {
         const done = state.sessionTotal
-        const current = Math.min(done + 1, LIMIT)
+        const current = done >= LIMIT ? LIMIT : (done + 1)
         const remainingAll = Math.max(LIMIT - done, 0)
-        elProgressText.innerHTML = `いま <span class='numBig'>${current}</span>もんめ / <span class='numBig'>${LIMIT}</span>もん`
-        elProgressText2.innerHTML = `のこり <span class='numBig'>${remainingAll}</span>もん`
+      
+        elProgressText.innerHTML =
+          `いま <span class='numBig'>${current}</span>もんめ / <span class='numBig'>${LIMIT}</span>もん`
+      
+        elProgressText2.innerHTML =
+          `のこり <span class='numBig'>${remainingAll}</span>もん`
+      
         const pct = Math.max(0, Math.min(100, (done / LIMIT) * 100))
         elProgressFill.style.width = `${pct}%`
       }
@@ -1213,6 +1219,7 @@
       }
 
       function startQuestion() {
+        clearAutoNextTimer()
         hideJudge()
         state.phase = 'question'
         state.input = ''
@@ -1268,6 +1275,13 @@
         judgeTimer = null
       }
 
+      function clearAutoNextTimer() {
+        if (state.autoNextTimer) {
+          clearTimeout(state.autoNextTimer)
+          state.autoNextTimer = null
+        }
+      }
+
       function formatDuration(ms) {
         const sec = Math.max(0, Math.floor(ms / 1000))
         const m = Math.floor(sec / 60)
@@ -1277,6 +1291,7 @@
       }
 
       function stop() {
+        clearAutoNextTimer()
         state.phase = 'stopped'
         state.current = null
         lockInput(true)
@@ -1339,6 +1354,7 @@
           typed: typed,
           answer: state.current.answer
         })
+      
         state.judged = true
       
         if (correct) {
@@ -1354,6 +1370,16 @@
         if (state.sessionTotal >= LIMIT) {
           stop()
           return
+        }
+      
+        if (isKeyboardMode()) {
+          clearAutoNextTimer()
+          state.autoNextTimer = setTimeout(() => {
+            state.autoNextTimer = null
+            if (state.phase === 'stopped') return
+            if (!state.judged) return
+            nextAfterJudge()
+          }, 1000)
         }
       }
 
