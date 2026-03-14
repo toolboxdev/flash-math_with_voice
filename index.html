@@ -1245,13 +1245,6 @@
         elResult.classList.add('hidden')
         btnBackToSettings.classList.add('hidden')
 
-        if (isKeyboardMode()) {
-          setTimeout(() => {
-            if (!state.locked && !state.judged) {
-              focusAnswerInputWithFallback()
-            }
-          }, 0)
-        }
       }
 
       let judgeTimer = null
@@ -1374,13 +1367,22 @@
           return
         }
       
-        if (isKeyboardMode()) {
+       if (isKeyboardMode()) {
           clearAutoNextTimer()
           state.autoNextTimer = setTimeout(() => {
             state.autoNextTimer = null
             if (state.phase === 'stopped') return
             if (!state.judged) return
-            nextAfterJudge()
+      
+            startQuestion()
+      
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                if (state.phase !== 'question') return
+                if (state.locked) return
+                focusAnswerInputWithFallback()
+              })
+            })
           }, 1000)
         }
       }
@@ -1388,16 +1390,7 @@
       function nextAfterJudge() {
         if (!state.judged) return
         if (state.phase === 'stopped') return
-      
         startQuestion()
-      
-        if (isKeyboardMode()) {
-          setTimeout(() => {
-            if (state.phase !== 'question') return
-            if (state.locked) return
-            focusAnswerInputWithFallback()
-          }, 0)
-        }
       }
 
       function appendDigit(d) {
