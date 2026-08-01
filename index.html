@@ -3,47 +3,54 @@
 <head>
   <meta charset='utf-8' />
   <meta name='viewport' content='width=device-width, initial-scale=1, viewport-fit=cover' />
-  <meta name='theme-color' content='#111827' />
+  <meta name='theme-color' content='#fff8e7' />
   <title>フラッシュ たしざん ひきざん</title>
   <style>
     :root{
-      --bg:#0b1020;
-      --card:#111827;
-      --muted:#9ca3af;
-      --text:#e5e7eb;
-      --btn:#1f2937;
-      --btn2:#111827;
-      --primary:#2563eb;
+      --bg:#fff8e7;
+      --card:#fff8e7;
+      --muted:#7a6955;
+      --text:#3f3428;
+      --btn:#dbeafe;
+      --btn2:#e8f3ff;
+      --primary:#4f83cc;
       --danger:#dc2626;
+      --border:#d2ad6b;
       --radius:18px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    html{background: linear-gradient(180deg, var(--bg), #050814);}
+    html{background: linear-gradient(180deg, var(--bg), #f5e6c8);}
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Noto Sans JP', sans-serif;
-      background: linear-gradient(180deg, var(--bg), #050814);
+      background: linear-gradient(180deg, var(--bg), #f5e6c8);
       background-attachment: fixed;
       color:var(--text);
     }
     .app{min-height:100%; display:flex; flex-direction:column;}
     .topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 14px 10px;}
-    .title{font-size:18px; font-weight:700}
+    .title{font-size:18px; font-weight:700; color:#3f3428}
     .main{flex:1; padding:12px 14px 18px}
 
     .screen{max-width:720px; margin:0 auto}
     .hidden{display:none !important}
 
-    .h1{margin:8px 0 14px; font-size:22px}
+    .h1{margin:8px 0 14px; font-size:22px; color:#3f3428}
+
+    .topbar .btn.ghost,
+    #btnBackToSettings.btn.ghost{
+      color:#3f3428;
+      border-color:rgba(63,52,40,0.18);
+    }
 
     .card{
-      background:rgba(17,24,39,0.85);
-      border:1px solid rgba(255,255,255,0.06);
+      background:var(--card);
+      border:2px solid var(--border);
       border-radius:var(--radius);
       padding:14px;
       margin:12px 0;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      box-shadow:0 6px 16px rgba(116,85,39,0.12);
     }
     .label{font-size:14px; color:var(--muted); margin-bottom:10px}
     .hint{font-size:12px; color:var(--muted); margin-top:10px}
@@ -53,7 +60,7 @@
 
     .segBtn{
       background:var(--btn);
-      border:1px solid rgba(255,255,255,0.08);
+      border:1px solid #8fb3d9;
       color:var(--text);
       padding:10px 12px;
       border-radius:14px;
@@ -62,13 +69,13 @@
       cursor:pointer;
     }
     .segBtn.active{
-      outline:2px solid rgba(37,99,235,0.7);
-      background:rgba(37,99,235,0.25);
+      outline:2px solid var(--primary);
+      background:#bfdbfe;
     }
 
     .btn{
       background:var(--btn2);
-      border:1px solid rgba(255,255,255,0.10);
+      border:1px solid #8fb3d9;
       color:var(--text);
       padding:12px 14px;
       border-radius:16px;
@@ -76,13 +83,13 @@
       cursor:pointer;
     }
     .btn.big{width:100%; padding:16px 14px; font-size:20px}
-    .btn.primary{background:rgba(37,99,235,0.9); border-color:rgba(255,255,255,0.12)}
+    .btn.primary{background:var(--primary); border-color:#3c6da9; color:#fff}
     .btn.ghost{background:transparent}
 
     .btn.subtle{
-      background:rgba(255,255,255,0.03);
-      border:1px solid rgba(255,255,255,0.10);
-      color:rgba(229,231,235,0.80);
+      background:#eef6ff;
+      border:1px solid #9fbdd9;
+      color:#334e68;
       font-size:16px;
       padding:10px 12px;
       border-radius:14px;
@@ -90,32 +97,35 @@
 
     .switch{position:relative; width:54px; height:32px; display:inline-block;}
     .switch input{display:none}
-    .slider{position:absolute; inset:0; border-radius:16px; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.10);}
+    .slider{position:absolute; inset:0; border-radius:16px; background:#dbeafe; border:1px solid #8fb3d9;}
     .slider:before{content:''; position:absolute; width:26px; height:26px; left:3px; top:2px; border-radius:50%; background:#fff; transition: transform 0.18s ease;}
+    .switch input:checked + .slider{background:#93c5fd; border-color:#4f83cc;}
     .switch input:checked + .slider:before{transform: translateX(22px);}
 
-    .footer{padding:10px 14px 16px; color:var(--muted); font-size:12px;}
-    .status{max-width:720px; margin:0 auto}
+    .footer{padding:10px 14px 16px; color:#6b5a46; font-size:12px;}
+    .status{max-width:720px; margin:0 auto; color:#6b5a46}
 
     #screenQuiz{display:flex; flex-direction:column; min-height:100%;}
     #screenQuiz[hidden]{display:none !important;}
     #screenQuiz.hidden{display:none !important;}
 
     .progressRow{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:6px;}
-    .progressText{font-size:14px; color:var(--muted);}
+    .progressText{font-size:14px; color:#6b5a46;}
     .numBig{font-size:30px; font-weight:900; color:var(--text);}
     .numHuge{font-size:60px; font-weight:900; color:var(--text);}
     .resultLine{margin:8px 0; line-height:1.05;}
-    .progressBar{height:10px; background:rgba(255,255,255,0.10); border-radius:999px; overflow:hidden; margin-top:8px;}
+    .progressBar{height:10px; background:rgba(63,52,40,0.12); border-radius:999px; overflow:hidden; margin-top:8px;}
     .progressFill{height:100%; width:0%; background:rgba(37,99,235,0.9);}
+    .progressText .numBig,
+    .result .numHuge{color:#3f3428;}
 
     .quizCard{
-      background:rgba(17,24,39,0.85);
-      border:1px solid rgba(255,255,255,0.06);
+      background:var(--card);
+      border:2px solid var(--border);
       border-radius:var(--radius);
       padding:16px 14px;
       margin:12px 0 12px;
-      box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+      box-shadow:0 6px 16px rgba(116,85,39,0.12);
       text-align:center;
       position:relative;
       overflow:hidden;
@@ -166,7 +176,7 @@
       min-width:1ch;
       text-align:left;
     }
-    .typed.muted{ color:rgba(229,231,235,0.40); }
+    .typed.muted{ color:rgba(63,52,40,0.35); }
 
     .typedInput{
       width:4ch;
@@ -186,7 +196,7 @@
       caret-color:var(--text);
     }
     .typedInput.hidden{display:none !important;}
-    .typedInput::placeholder{color:rgba(229,231,235,0.40);}
+    .typedInput::placeholder{color:rgba(63,52,40,0.35);}
 
     @media (max-width:420px){
       .problem{font-size:46px;}
@@ -225,13 +235,13 @@
       display:inline-block;
       padding:10px 16px;
       border-radius:999px;
-      background:rgba(17,24,39,0.92);
-      border:1px solid rgba(255,255,255,0.12);
-      color:rgba(229,231,235,0.96);
+      background:#f8e8c9;
+      border:2px solid var(--border);
+      color:var(--text);
       font-weight:900;
       font-size:24px;
       letter-spacing:0.5px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      box-shadow:0 5px 14px rgba(116,85,39,0.12);
       line-height:1;
     }
     @media (max-width:420px){
@@ -241,7 +251,7 @@
     .answerLabel{
       font-size:16px;
       font-weight:800;
-      color:rgba(229,231,235,0.85);
+      color:#6b5a46;
     }
     
     .answerValue{
@@ -258,8 +268,8 @@
     }
 
     .answerLine.hidden{display:none;}
-    .result{margin:10px 0; font-size:20px; font-weight:800; text-align:center;}
-    .resultMeta{margin-top:10px; font-size:14px; color:var(--muted);}
+    .result{margin:10px 0; font-size:20px; font-weight:800; text-align:center; color:#3f3428;}
+    .resultMeta{margin-top:10px; font-size:14px; color:#6b5a46;}
 
     .bottomDock{
       position:fixed;
@@ -267,8 +277,7 @@
       right:0;
       bottom:0;
       padding:10px 14px calc(10px + env(safe-area-inset-bottom));
-      background: linear-gradient(180deg, rgba(11,16,32,0), rgba(11,16,32,0.75) 25%, rgba(11,16,32,0.97));
-      backdrop-filter: blur(8px);
+      background: linear-gradient(180deg, rgba(255,248,231,0.94), rgba(255,248,231,0.98) 25%, #fff8e7);
       z-index:999;
     }
     .dockInner{
@@ -292,8 +301,8 @@
       margin:0 auto;
     }
     .key{
-      background:rgba(17,24,39,0.88);
-      border:1px solid rgba(255,255,255,0.10);
+      background:var(--btn);
+      border:1px solid #8fb3d9;
       color:var(--text);
       border-radius:16px;
       padding:18px 12px;
@@ -302,17 +311,21 @@
       cursor:pointer;
       min-height:80px;
       aspect-ratio:1 / 1;
+      touch-action:manipulation;
+      user-select:none;
+      -webkit-user-select:none;
     }
 
     .key:active{transform: translateY(1px);}
     .key.ok{
-      background:rgba(37,99,235,0.9);
-      border-color:rgba(255,255,255,0.14);
+      background:var(--primary);
+      border-color:#3c6da9;
+      color:#fff;
     }
     .key.next{
-      background:rgba(255,255,255,0.03);
-      border:1px solid rgba(255,255,255,0.10);
-      color:rgba(229,231,235,0.92);
+      background:#eef6ff;
+      border:1px solid #9fbdd9;
+      color:#334e68;
       font-size:20px;
     }
     .key:disabled{
@@ -356,16 +369,16 @@
     .tableWrap{
       overflow:auto;
       border-radius:14px;
-      border:1px solid rgba(255,255,255,0.06);
-      background:rgba(17,24,39,0.85);
+      border:2px solid var(--border);
+      background:var(--card);
     }
-    table{width:100%; border-collapse:collapse; min-width:640px; background:rgba(17,24,39,0.85);}
-    th,td{padding:10px 10px; border-bottom:1px solid rgba(255,255,255,0.06); text-align:left; vertical-align:top; background:rgba(17,24,39,0.85);}
+    table{width:100%; border-collapse:collapse; min-width:640px; background:var(--card);}
+    th,td{padding:10px 10px; border-bottom:1px solid #dfc695; text-align:left; vertical-align:top; background:var(--card);}
     th{font-size:12px; color:var(--muted); font-weight:700; position:sticky; top:0;}
     td{font-size:14px;}
     .right{text-align:right;}
     .small{font-size:12px; color:var(--muted);}
-    .pill{display:inline-block; padding:2px 8px; border-radius:999px; background:rgba(255,255,255,0.08); font-size:12px; color:var(--muted);}
+    .pill{display:inline-block; padding:2px 8px; border-radius:999px; background:#f2d7a6; font-size:12px; color:var(--muted);}
     .muted{color:var(--muted);}
     .historyActions{display:flex; gap:10px; flex-wrap:wrap;}
 
@@ -385,13 +398,13 @@
     }
     .modal.hidden{display:none;}
     .modalBox{
-      background:rgba(17,24,39,0.95);
-      border:1px solid rgba(255,255,255,0.10);
+      background:var(--card);
+      border:2px solid var(--border);
       border-radius:22px;
       padding:16px;
       max-width:520px;
       width:100%;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+      box-shadow:0 18px 40px rgba(63,52,40,0.28);
     }
     .modalTitle{font-size:18px; font-weight:800; margin-bottom:10px;}
     .modalText{font-size:14px; color:var(--muted); margin-bottom:14px; line-height:1.6;}
@@ -418,8 +431,8 @@
       max-height:60vh;
       overflow:auto;
       border-radius:14px;
-      border:1px solid rgba(255,255,255,0.10);
-      background:rgba(17,24,39,0.60);
+      border:1px solid var(--border);
+      background:var(--card);
     }
     .sessionDetail table{
       width:100%;
@@ -428,14 +441,14 @@
     }
     .sessionDetail th, .sessionDetail td{
       padding:10px 10px;
-      border-bottom:1px solid rgba(255,255,255,0.06);
+      border-bottom:1px solid #dfc695;
     }
     .sessionDetail th{
       font-size:12px;
       color:var(--muted);
       position:sticky;
       top:0;
-      background:rgba(17,24,39,0.92);
+      background:#f8e8c9;
     }
     .sessionDetail .markOk{color:rgba(34,197,94,0.95); font-weight:900;}
     .sessionDetail .markNg{color:rgba(220,38,38,0.95); font-weight:900;}
@@ -739,6 +752,7 @@
       const btnNextInline = $('btnNextInline')
 
       const LIMIT = 50
+      const CORRECT_AUTO_NEXT_DELAY_MS = 700
 
       const state = {
         settings: { opmode: 'add', range: 'c2a', sum10: false, inputMode: 'keypad' },
@@ -1374,16 +1388,27 @@
         }
       
         lockInput(true)
-        setNextEnabled(true)
         updateProgressUI()
-
-        if (isKeyboardMode()) {
-          btnNextInline.classList.remove('hidden')
-        }
       
         if (state.sessionTotal >= LIMIT) {
           stop()
           return
+        }
+
+        if (correct) {
+          setNextEnabled(false)
+          btnNextInline.classList.add('hidden')
+          setTimeout(() => {
+            if (!state.judged || state.phase === 'stopped') return
+            nextAfterJudge()
+          }, CORRECT_AUTO_NEXT_DELAY_MS)
+          return
+        }
+
+        setNextEnabled(true)
+
+        if (isKeyboardMode()) {
+          btnNextInline.classList.remove('hidden')
         }
       
       }
