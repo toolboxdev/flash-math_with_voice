@@ -27,13 +27,14 @@
       background: linear-gradient(180deg, var(--bg), #f5e6c8);
       background-attachment: fixed;
       color:var(--text);
+      overflow-x:hidden;
     }
     .app{min-height:100%; display:flex; flex-direction:column;}
-    .topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 14px 10px;}
+    .topbar{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:clamp(10px, 2vw, 14px) clamp(10px, 3vw, 18px);}
     .title{font-size:18px; font-weight:700; color:#3f3428}
-    .main{flex:1; padding:12px 14px 18px}
+    .main{flex:1; padding:clamp(8px, 2vw, 12px) clamp(8px, 3vw, 18px) 18px}
 
-    .screen{max-width:720px; margin:0 auto}
+    .screen{width:100%; max-width:720px; margin:0 auto}
     .hidden{display:none !important}
 
     .h1{margin:8px 0 14px; font-size:22px; color:#3f3428}
@@ -148,14 +149,14 @@
       min-width:0;
     }
     .problem{
-      font-size:56px;
+      font-size:clamp(36px, 9vw, 56px);
       font-weight:900;
       letter-spacing:1px;
       line-height:1;
       white-space:nowrap;
     }
     .eq{
-      font-size:46px;
+      font-size:clamp(30px, 7.5vw, 46px);
       font-weight:900;
       line-height:1;
       opacity:0.95;
@@ -169,7 +170,7 @@
       align-items:baseline;
     }
     .typed{
-      font-size:56px;
+      font-size:clamp(36px, 9vw, 56px);
       font-weight:900;
       letter-spacing:2px;
       line-height:1;
@@ -180,7 +181,7 @@
 
     .typedInput{
       width:4ch;
-      font-size:56px;
+      font-size:clamp(36px, 9vw, 56px);
       font-weight:900;
       letter-spacing:2px;
       line-height:1;
@@ -197,16 +198,6 @@
     }
     .typedInput.hidden{display:none !important;}
     .typedInput::placeholder{color:rgba(63,52,40,0.35);}
-
-    @media (max-width:420px){
-      .problem{font-size:46px;}
-      .eq{font-size:40px;}
-      .typed{font-size:46px;}
-      .typedInput{font-size:46px; width:4ch; min-width:4ch;}
-      .typedSlot{width: 3ch;}
-      .keypad{max-width:360px; gap:12px;}
-      .key{min-height:74px; font-size:26px; padding:16px 10px;}
-    }
 
     .judgeMark{
       position:absolute;
@@ -244,10 +235,6 @@
       box-shadow:0 5px 14px rgba(116,85,39,0.12);
       line-height:1;
     }
-    @media (max-width:420px){
-      .answerPill{font-size:52px;}
-    }
-
     .answerLabel{
       font-size:16px;
       font-weight:800;
@@ -255,7 +242,7 @@
     }
     
     .answerValue{
-      font-size:72px;
+      font-size:clamp(44px, 14vw, 72px);
       font-weight:900;
       line-height:1;
       letter-spacing:0.5px;
@@ -263,10 +250,6 @@
       display:inline-block;
     }
     
-    @media (max-width:420px){
-      .answerValue{font-size:60px;}
-    }
-
     .answerLine.hidden{display:none;}
     .result{margin:10px 0; font-size:20px; font-weight:800; text-align:center; color:#3f3428;}
     .resultMeta{margin-top:10px; font-size:14px; color:#6b5a46;}
@@ -359,6 +342,223 @@
         font-size: 22px;
         padding: 14px 18px;
         border-radius: 18px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .topbar{
+        padding:8px 10px;
+      }
+
+      .main{
+        padding:6px 8px 12px;
+      }
+
+      .h1{
+        margin:4px 0 8px;
+        font-size:20px;
+      }
+
+      .card{
+        padding:11px;
+        margin:8px 0;
+        border-radius:15px;
+      }
+
+      .seg{
+        gap:8px;
+      }
+
+      .segBtn{
+        min-width:0;
+        padding:9px 7px;
+        font-size:15px;
+        line-height:1.25;
+      }
+
+      .segBtn[data-opmode]{
+        flex:1 1 calc(33.333% - 6px);
+      }
+
+      .segBtn[data-range],
+      .segBtn[data-inputmode]{
+        flex:1 1 calc(50% - 4px);
+      }
+
+      .progressRow{
+        gap:6px;
+      }
+
+      .progressText{
+        font-size:12px;
+      }
+
+      .numBig{
+        font-size:24px;
+      }
+
+      .quizCard{
+        padding:12px 8px;
+        margin:8px 0;
+      }
+
+      .exprRow{
+        gap:5px;
+        padding:6px 0 2px;
+      }
+
+      .exprLeft{
+        gap:6px;
+      }
+
+      .typedSlot{
+        width:3.5ch;
+      }
+
+      .typedInput{
+        width:3.5ch;
+        min-width:3.5ch;
+      }
+
+      .judgeMark{
+        top:4px;
+        right:8px;
+        font-size:68px;
+      }
+
+      .answerPill{
+        padding:8px 12px;
+      }
+
+      .bottomDock{
+        padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+      }
+
+      .dockInner{
+        gap:8px;
+      }
+
+      .keypad{
+        width:100%;
+        max-width:380px;
+        gap:8px;
+      }
+
+      .key{
+        min-height:clamp(52px, 9.5vh, 68px);
+        aspect-ratio:auto;
+        padding:8px 6px;
+        border-radius:14px;
+        font-size:clamp(24px, 7vw, 30px);
+      }
+
+      .key.next{
+        font-size:18px;
+      }
+
+      #btnClearAll{
+        padding:8px 12px;
+        font-size:16px;
+      }
+
+      .modal{
+        padding:10px;
+      }
+
+      .modalBox{
+        padding:13px;
+        border-radius:17px;
+      }
+
+      .modalActions .btn{
+        min-width:0;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .title{
+        font-size:16px;
+      }
+
+      .topbar .btn{
+        padding:9px 11px;
+        font-size:16px;
+      }
+
+      .segBtn{
+        font-size:14px;
+      }
+    }
+
+    @media (max-height: 620px) and (orientation: landscape) {
+      .app{
+        min-height:auto;
+      }
+
+      .topbar{
+        padding:5px 10px;
+      }
+
+      .main{
+        padding:4px 10px 8px;
+      }
+
+      #screenQuiz{
+        min-height:0;
+      }
+
+      .progressRow{
+        margin-top:0;
+      }
+
+      .progressBar{
+        margin-top:3px;
+        height:7px;
+      }
+
+      .quizCard{
+        margin:5px 0;
+        padding:7px 10px;
+      }
+
+      .exprRow{
+        padding:3px 0;
+      }
+
+      .bottomDock{
+        position:static;
+        padding:6px 10px 8px;
+        background:transparent;
+      }
+
+      .dockInner{
+        gap:5px;
+      }
+
+      .keypad{
+        grid-template-columns:repeat(6, minmax(44px, 1fr));
+        max-width:720px;
+        gap:6px;
+      }
+
+      .key{
+        min-height:46px;
+        aspect-ratio:auto;
+        padding:5px;
+        font-size:22px;
+      }
+
+      .key.next{
+        font-size:16px;
+      }
+
+      #btnClearAll{
+        padding:5px 12px;
+        font-size:14px;
+      }
+
+      .footer{
+        display:none;
       }
     }
 
@@ -752,7 +952,7 @@
       const btnNextInline = $('btnNextInline')
 
       const LIMIT = 50
-      const CORRECT_AUTO_NEXT_DELAY_MS = 700
+      const CORRECT_AUTO_NEXT_DELAY_MS = 350
 
       const state = {
         settings: { opmode: 'add', range: 'c2a', sum10: false, inputMode: 'keypad' },
@@ -862,7 +1062,8 @@
 
       function syncBottomPadding() {
         try {
-          const h = bottomDock.classList.contains('hidden') ? 0 : bottomDock.getBoundingClientRect().height
+          const isFixed = getComputedStyle(bottomDock).position === 'fixed'
+          const h = (!bottomDock.classList.contains('hidden') && isFixed) ? bottomDock.getBoundingClientRect().height : 0
           elQuiz.style.paddingBottom = h ? `${h + 14}px` : ''
         } catch {}
       }
